@@ -28,8 +28,8 @@ package {
 }
 
 JIT_DEBUG_REGISTER_CODE_LDFLAGS = [
-    "-Wl,--keep-unique,__jit_debug_register_code",
-    "-Wl,--keep-unique,__dex_debug_register_code",
+    // "-Wl,--keep-unique,__jit_debug_register_code",
+    // "-Wl,--keep-unique,__dex_debug_register_code"
 ]
 
 // These are defaults for native shared libaries that are expected to be
@@ -817,6 +817,7 @@ art_cc_defaults {
         "intern_table_test.cc",
         "interpreter/safe_math_test.cc",
         "interpreter/unstarted_runtime_test.cc",
+        "jit/jit_load_test.cc",
         "jit/jit_memory_region_test.cc",
         "jit/profile_saver_test.cc",
         "jit/profiling_info_test.cc",

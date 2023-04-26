@@ -480,6 +480,7 @@ class HGraphVisualizerPrinter : public HGraphDelegateVisitor {
         << array_set->GetValueCanBeNull() << std::noboolalpha;
     StartAttributeStream("needs_type_check") << std::boolalpha
         << array_set->NeedsTypeCheck() << std::noboolalpha;
+    StartAttributeStream("write_barrier_kind") << array_set->GetWriteBarrierKind();
   }
 
   void VisitCompare(HCompare* compare) override {
@@ -549,7 +550,9 @@ class HGraphVisualizerPrinter : public HGraphDelegateVisitor {
         iset->GetFieldInfo().GetDexFile().PrettyField(iset->GetFieldInfo().GetFieldIndex(),
                                                       /* with type */ false);
     StartAttributeStream("field_type") << iset->GetFieldType();
-    StartAttributeStream("predicated") << std::boolalpha << iset->GetIsPredicatedSet();
+    StartAttributeStream("predicated")
+        << std::boolalpha << iset->GetIsPredicatedSet() << std::noboolalpha;
+    StartAttributeStream("write_barrier_kind") << iset->GetWriteBarrierKind();
   }
 
   void VisitStaticFieldGet(HStaticFieldGet* sget) override {
@@ -564,6 +567,7 @@ class HGraphVisualizerPrinter : public HGraphDelegateVisitor {
         sset->GetFieldInfo().GetDexFile().PrettyField(sset->GetFieldInfo().GetFieldIndex(),
                                                       /* with type */ false);
     StartAttributeStream("field_type") << sset->GetFieldType();
+    StartAttributeStream("write_barrier_kind") << sset->GetWriteBarrierKind();
   }
 
   void VisitUnresolvedInstanceFieldGet(HUnresolvedInstanceFieldGet* field_access) override {
@@ -907,6 +911,10 @@ class HGraphVisualizerPrinter : public HGraphDelegateVisitor {
     } else if (!IsDebugDump()) {
       // Don't print useless information to logcat
       PrintEmptyProperty("flags");
+    }
+
+    if (block->IsTryBlock()) {
+      PrintProperty("try_start", block->GetTryCatchInformation()->GetTryEntry().GetBlock());
     }
 
     if (block->GetDominator() != nullptr) {
